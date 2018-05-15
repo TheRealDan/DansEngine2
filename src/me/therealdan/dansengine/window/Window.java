@@ -28,8 +28,16 @@ public class Window extends Canvas {
     private int frames = 0;
     private long time = System.currentTimeMillis();
 
+    public Window() {
+        this("");
+    }
+
     public Window(String title) {
-        this(title, 800, 600, true, true, false, false);
+        this(title, 800, 600);
+    }
+
+    public Window(String title, int width, int height) {
+        this(title, width, height, true, true, false, false);
     }
 
     public Window(String title, int width, int height, boolean resizeable, boolean exitOnClose, boolean alwaysOnTop, boolean undecorated) {
