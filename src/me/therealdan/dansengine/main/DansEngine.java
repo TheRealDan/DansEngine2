@@ -27,6 +27,7 @@ public class DansEngine implements Runnable {
 
     @Override
     public void run() {
+        // TODO - Rewrite main process
         running = true;
         long time = System.currentTimeMillis();
         long now, last = System.nanoTime();
