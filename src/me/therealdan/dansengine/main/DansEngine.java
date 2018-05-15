@@ -11,13 +11,14 @@ public class DansEngine implements Runnable {
     private static double TARGET_UPS;
     private static double UPDATE_INTERVAL;
     private static int UPS = 0;
+    private static boolean MATCH_UPS = true;
 
     public DansEngine() {
         this(60.0);
     }
 
     public DansEngine(double targetUPS) {
-        this.dansEngine = this;
+        dansEngine = this;
 
         setTargetUPS(targetUPS);
 
@@ -27,7 +28,6 @@ public class DansEngine implements Runnable {
 
     @Override
     public void run() {
-        // TODO - Rewrite main process
         running = true;
         long time = System.currentTimeMillis();
         long now, last = System.nanoTime();
@@ -40,10 +40,11 @@ public class DansEngine implements Runnable {
                 last = now;
                 while (updates >= 1) {
                     update();
+                    if (getMatchUPS()) render();
                     updates--;
                     ups++;
                 }
-                render();
+                if (!getMatchUPS()) render();
                 if (System.currentTimeMillis() - time >= 1000) {
                     time = System.currentTimeMillis();
                     DansEngine.UPS = ups;
@@ -80,12 +81,20 @@ public class DansEngine implements Runnable {
         UPDATE_INTERVAL = 1000000000.0 / targetUPS;
     }
 
+    public static void setMatchUPS(boolean matchUPS) {
+        MATCH_UPS = matchUPS;
+    }
+
     public static double getTargetUPS() {
         return TARGET_UPS;
     }
 
     public static int getUPS() {
         return UPS;
+    }
+
+    public static boolean getMatchUPS() {
+        return MATCH_UPS;
     }
 
     public static DansEngine getInstance() {
