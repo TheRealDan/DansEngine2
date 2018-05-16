@@ -43,8 +43,6 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
     private HashSet<MouseReleasedListener> mouseReleasedListeners = new HashSet<>();
     private HashSet<MouseWheelMovedListener> mouseWheelMovedListeners = new HashSet<>();
 
-    // TODO - call remaining listeners ^
-
     @Override
     public void mousePressed(MouseEvent event) {
         Click click = byEvent(event);
