@@ -34,11 +34,29 @@ public class Vector {
         return "x=" + this.x  + ", y=" + this.y + ", z=" + this.z;
     }
 
+    public Vector add(Vector vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+        this.z += vector.z;
+        return this;
+    }
+
+    public Vector subtract(Vector vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+        this.z -= vector.z;
+        return this;
+    }
+
     public Vector crossProduct(Vector vector) {
         return new Vector(
                 this.y * vector.z - vector.y * this.z,
                 this.z * vector.x - vector.z * this.x,
                 this.x * vector.y - vector.x * this.y
         );
+    }
+
+    public Vector clone() {
+        return new Vector(x, y, z);
     }
 }
