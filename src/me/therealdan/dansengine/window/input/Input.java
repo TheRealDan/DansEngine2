@@ -1,5 +1,10 @@
 package me.therealdan.dansengine.window.input;
 
+import me.therealdan.dansengine.window.input.controller.ArrowKeysController;
+import me.therealdan.dansengine.window.input.controller.TextController;
+import me.therealdan.dansengine.window.input.controller.WASDController;
+import me.therealdan.dansengine.window.input.listener.*;
+
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,15 +27,30 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
     private boolean[] releasedKeys = new boolean[1024];
     private boolean[] heldKeys = new boolean[1024];
 
-    private HashSet<TextReceiver> textReceivers = new HashSet<>();
-    private HashSet<MouseReceiver> mouseReceivers = new HashSet<>();
+    private HashSet<ArrowKeysController> arrowKeysControllers = new HashSet<>();
+    private HashSet<TextController> textControllers = new HashSet<>();
+    private HashSet<WASDController> wasdControllers = new HashSet<>();
+
+    private HashSet<KeyPressedListener> keyPressedListeners = new HashSet<>();
+    private HashSet<KeyReleasedListener> keyReleasedListeners = new HashSet<>();
+    private HashSet<KeyTypedListener> keyTypedListeners = new HashSet<>();
+    private HashSet<MouseClickedListener> mouseClickedListeners = new HashSet<>();
+    private HashSet<MouseDraggedListener> mouseDraggedListeners = new HashSet<>();
+    private HashSet<MouseEnteredListener> mouseEnteredListeners = new HashSet<>();
+    private HashSet<MouseExitedListener> mouseExitedListeners = new HashSet<>();
+    private HashSet<MouseMovedListener> mouseMovedListeners = new HashSet<>();
+    private HashSet<MousePressedListener> mousePressedListeners = new HashSet<>();
+    private HashSet<MouseReleasedListener> mouseReleasedListeners = new HashSet<>();
+    private HashSet<MouseWheelMovedListener> mouseWheelMovedListeners = new HashSet<>();
+
+    // TODO - call remaining listeners ^
 
     @Override
     public void mousePressed(MouseEvent event) {
-        for (MouseReceiver mouseReceiver : mouseReceivers)
-            mouseReceiver.mousePressed(event, this);
+        Click click = byEvent(event);
 
-        Click click = getClick(event.getButton());
+        for (MousePressedListener mousePressedListener : mousePressedListeners)
+            mousePressedListener.mousePressed(event, this, click);
 
         if (!mousePressed.containsKey(click)) mousePressed.put(click, false);
         if (!mouseReleased.containsKey(click)) mouseReleased.put(click, false);
@@ -45,10 +65,10 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void mouseReleased(MouseEvent event) {
-        for (MouseReceiver mouseReceiver : mouseReceivers)
-            mouseReceiver.mouseReleased(event, this);
+        Click click = byEvent(event);
 
-        Click click = getClick(event.getButton());
+        for (MouseReleasedListener mouseReleasedListener : mouseReleasedListeners)
+            mouseReleasedListener.mouseReleased(event, this, click);
 
         mouseReleased.put(click, false);
         mousePressed.put(click, false);
@@ -58,12 +78,16 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void mouseClicked(MouseEvent event) {
+        Click click = byEvent(event);
+
+        for (MouseClickedListener mouseClickedListener : mouseClickedListeners)
+            mouseClickedListener.mouseClicked(event, this, click);
     }
 
     @Override
     public void mouseMoved(MouseEvent event) {
-        for (MouseReceiver mouseReceiver : mouseReceivers)
-            mouseReceiver.mouseMoved(event, this);
+        for (MouseMovedListener mouseMovedListener : mouseMovedListeners)
+            mouseMovedListener.mouseMoved(event, this);
 
         this.mouseX = event.getX();
         this.mouseY = event.getY();
@@ -76,8 +100,8 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void mouseDragged(MouseEvent event) {
-        for (MouseReceiver mouseReceiver : mouseReceivers)
-            mouseReceiver.mouseDragged(event, this);
+        for (MouseDraggedListener mouseDraggedListener : mouseDraggedListeners)
+            mouseDraggedListener.mouseDragged(event, this);
 
         this.mouseDragX = event.getX();
         this.mouseDragY = event.getY();
@@ -90,37 +114,90 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void mouseEntered(MouseEvent event) {
+        for (MouseEnteredListener mouseEnteredListener : mouseEnteredListeners)
+            mouseEnteredListener.mouseEntered(event, this);
+
         inWindow = true;
     }
 
     @Override
     public void mouseExited(MouseEvent event) {
+        for (MouseExitedListener mouseExitedListener : mouseExitedListeners)
+            mouseExitedListener.mouseExcited(event, this);
+
         inWindow = false;
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent event) {
+        for (MouseWheelMovedListener mouseWheelMovedListener : mouseWheelMovedListeners)
+            mouseWheelMovedListener.mouseWheelMoved(event, this);
+
         this.mouseWheel = event.getWheelRotation();
     }
 
     @Override
     public void keyPressed(KeyEvent event) {
+        for (KeyPressedListener keyPressedListener : keyPressedListeners)
+            keyPressedListener.keyPressed(event, this);
+
         if (!releasedKeys[event.getKeyCode()]) {
             releasedKeys[event.getKeyCode()] = true;
             pressedKeys[event.getKeyCode()] = true;
         }
 
-        heldKeys[event.getKeyCode()] = true;
+        switch (event.getKeyCode()) {
+            case KeyEvent.VK_W:
+                for (WASDController wasdController : wasdControllers)
+                    wasdController.up();
+                break;
+            case KeyEvent.VK_A:
+                for (WASDController wasdController : wasdControllers)
+                    wasdController.left();
+                break;
+            case KeyEvent.VK_S:
+                for (WASDController wasdController : wasdControllers)
+                    wasdController.down();
+                break;
+            case KeyEvent.VK_D:
+                for (WASDController wasdController : wasdControllers)
+                    wasdController.right();
+                break;
+        }
+
+        switch (event.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
+                    arrowKeysController.up();
+                break;
+            case KeyEvent.VK_LEFT:
+                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
+                    arrowKeysController.left();
+                break;
+            case KeyEvent.VK_DOWN:
+                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
+                    arrowKeysController.down();
+                break;
+            case KeyEvent.VK_RIGHT:
+                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
+                    arrowKeysController.right();
+                break;
+        }
 
         switch (event.getKeyCode()) {
             case KeyEvent.VK_BACK_SPACE:
-                for (TextReceiver textReceiver : getTextReceivers())
-                    textReceiver.backspace();
-                return;
+                for (TextController textController : getTextControllers())
+                    textController.backspace();
+                break;
             case KeyEvent.VK_ENTER:
-                for (TextReceiver textReceiver : getTextReceivers())
-                    textReceiver.enter();
-                return;
+                for (TextController textController : getTextControllers())
+                    textController.enter();
+                break;
+        }
+
+        switch (event.getKeyCode()) {
+            case KeyEvent.VK_BACK_SPACE:
+            case KeyEvent.VK_ENTER:
             case KeyEvent.VK_DELETE:
             case KeyEvent.VK_SHIFT:
             case KeyEvent.VK_ESCAPE:
@@ -155,15 +232,18 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_CONTEXT_MENU:
             case KeyEvent.VK_CONVERT:
-                return;
+                break;
+            default:
+                for (TextController textController : getTextControllers())
+                    textController.type(event.getKeyChar() + "");
         }
-
-        for (TextReceiver textReceiver : getTextReceivers())
-            textReceiver.type(event.getKeyChar() + "");
     }
 
     @Override
     public void keyReleased(KeyEvent event) {
+        for (KeyReleasedListener keyReleasedListener : keyReleasedListeners)
+            keyReleasedListener.keyReleased(event, this);
+
         pressedKeys[event.getKeyCode()] = false;
         releasedKeys[event.getKeyCode()] = false;
 
@@ -172,24 +252,64 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void keyTyped(KeyEvent event) {
+        for (KeyTypedListener keyTypedListener : keyTypedListeners)
+            keyTypedListener.keyTyped(event, this);
     }
 
-    public void register(TextReceiver textReceiver) {
-        this.textReceivers.add(textReceiver);
+    public void register(ArrowKeysController arrowKeysController) {
+        this.arrowKeysControllers.add(arrowKeysController);
     }
 
-    public void unregister(TextReceiver textReceiver) {
-        if (!textReceivers.contains(textReceiver)) return;
-        this.textReceivers.remove(textReceiver);
+    public void register(TextController textController) {
+        this.textControllers.add(textController);
     }
 
-    public void register(MouseReceiver mouseReceiver) {
-        this.mouseReceivers.add(mouseReceiver);
+    public void register(WASDController wasdController) {
+        this.wasdControllers.add(wasdController);
     }
 
-    public void unregister(MouseReceiver mouseReceiver) {
-        if (!mouseReceivers.contains(mouseReceiver)) return;
-        this.mouseReceivers.remove(mouseReceiver);
+    public void register(KeyPressedListener keyPressedListener) {
+        keyPressedListeners.add(keyPressedListener);
+    }
+
+    public void register(KeyReleasedListener keyReleasedListener) {
+        keyReleasedListeners.add(keyReleasedListener);
+    }
+
+    public void register(KeyTypedListener keyTypedListener) {
+        keyTypedListeners.add(keyTypedListener);
+    }
+
+    public void register(MouseClickedListener mouseClickedListener) {
+        mouseClickedListeners.add(mouseClickedListener);
+    }
+
+    public void register(MouseDraggedListener mouseDraggedListener) {
+        mouseDraggedListeners.add(mouseDraggedListener);
+    }
+
+    public void register(MouseEnteredListener mouseEnteredListener) {
+        mouseEnteredListeners.add(mouseEnteredListener);
+    }
+
+    public void register(MouseExitedListener mouseExitedListener) {
+        mouseExitedListeners.add(mouseExitedListener);
+    }
+
+    public void register(MouseMovedListener mouseMovedListener) {
+        mouseMovedListeners.add(mouseMovedListener);
+    }
+
+    public void register(MousePressedListener mousePressedListener) {
+        mousePressedListeners.add(mousePressedListener);
+    }
+
+    public void register(MouseReleasedListener mouseReleasedListener) {
+        mouseReleasedListeners.add(mouseReleasedListener);
+    }
+
+    public void register(MouseWheelMovedListener mouseWheelMovedListener) {
+        mouseWheelMovedListeners.add(mouseWheelMovedListener);
     }
 
     public boolean wasClicked(Click click) {
@@ -247,10 +367,7 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     public boolean containsMouse(int x, int y, int width, int height) {
         if (!inWindow()) return false;
-        if (x < getAbsoluteMouseX() && getAbsoluteMouseX() < x + width)
-            if (y < getAbsoluteMouseY() && getAbsoluteMouseY() < y + height)
-                return true;
-        return false;
+        return (x < getAbsoluteMouseX() && getAbsoluteMouseX() < x + width) && (y < getAbsoluteMouseY() && getAbsoluteMouseY() < y + height);
     }
 
     public boolean inWindow() {
@@ -295,12 +412,12 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
         return value;
     }
 
-    private HashSet<TextReceiver> getTextReceivers() {
-        return textReceivers;
+    private HashSet<TextController> getTextControllers() {
+        return textControllers;
     }
 
-    private Click getClick(int button) {
-        switch (button) {
+    public static Click byEvent(MouseEvent event) {
+        switch (event.getButton()) {
             case 1:
                 return Click.LEFT;
             case 2:
