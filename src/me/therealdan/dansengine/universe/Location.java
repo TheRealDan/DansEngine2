@@ -31,6 +31,15 @@ public class Location {
         this.pitch = pitch;
     }
 
+    public void teleport(Location location) {
+        this.universe = location.universe;
+        this.x = location.x;
+        this.y = location.y;
+        this.z = location.z;
+        this.yaw = location.yaw;
+        this.pitch = location.pitch;
+    }
+
     public void setUniverse(int universe) {
         this.universe = universe;
     }
