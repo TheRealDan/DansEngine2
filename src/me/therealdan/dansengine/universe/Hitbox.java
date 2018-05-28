@@ -1,14 +1,14 @@
 package me.therealdan.dansengine.universe;
 
+import me.therealdan.dansengine.universe.camera.Camera;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 
 public class Hitbox {
 
-    private HashSet<Location> points = new HashSet<>();
+    private List<Location> points = new LinkedList<>();
 
     public Hitbox(Location point) {
         add(point);
@@ -18,11 +18,11 @@ public class Hitbox {
         add(points);
     }
 
-    public void render2D(Graphics2D graphics2D, boolean fill, Camera camera) {
+    public void render(Graphics2D graphics2D, Location origin, Camera camera, boolean fill) {
         if (fill) {
-            graphics2D.fillPolygon(getXPoints(camera), getYPoints(camera), getPoints().size());
+            graphics2D.fillPolygon(camera.getXPoints(origin, this), camera.getYPoints(origin, this), getPoints().size());
         } else {
-            graphics2D.drawPolygon(getXPoints(camera), getYPoints(camera), getPoints().size());
+            graphics2D.drawPolygon(camera.getXPoints(origin, this), camera.getYPoints(origin, this), getPoints().size());
         }
     }
 
@@ -87,24 +87,6 @@ public class Hitbox {
         }
 
         return greatestX || greatestY || greatestZ || lowestX || lowestY || lowestZ;
-    }
-
-    private int[] getXPoints(Camera camera) {
-        int[] xPoints = new int[getPoints().size()];
-        int i = 0;
-        for (Location point : getPoints()) {
-            xPoints[i++] = point.getXInteger() + camera.getXInteger();
-        }
-        return xPoints;
-    }
-
-    private int[] getYPoints(Camera camera) {
-        int[] yPoints = new int[getPoints().size()];
-        int i = 0;
-        for (Location point : getPoints()) {
-            yPoints[i++] = point.getYInteger() + camera.getYInteger();
-        }
-        return yPoints;
     }
 
     public List<Location> getPoints() {
