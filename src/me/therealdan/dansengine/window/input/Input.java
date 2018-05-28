@@ -136,50 +136,14 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     @Override
     public void keyPressed(KeyEvent event) {
+        heldKeys[event.getKeyCode()] = true;
+
         for (KeyPressedListener keyPressedListener : keyPressedListeners)
             keyPressedListener.keyPressed(event, this);
 
         if (!releasedKeys[event.getKeyCode()]) {
             releasedKeys[event.getKeyCode()] = true;
             pressedKeys[event.getKeyCode()] = true;
-        }
-
-        switch (event.getKeyCode()) {
-            case KeyEvent.VK_W:
-                for (WASDController wasdController : wasdControllers)
-                    wasdController.up();
-                break;
-            case KeyEvent.VK_A:
-                for (WASDController wasdController : wasdControllers)
-                    wasdController.left();
-                break;
-            case KeyEvent.VK_S:
-                for (WASDController wasdController : wasdControllers)
-                    wasdController.down();
-                break;
-            case KeyEvent.VK_D:
-                for (WASDController wasdController : wasdControllers)
-                    wasdController.right();
-                break;
-        }
-
-        switch (event.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
-                    arrowKeysController.up();
-                break;
-            case KeyEvent.VK_LEFT:
-                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
-                    arrowKeysController.left();
-                break;
-            case KeyEvent.VK_DOWN:
-                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
-                    arrowKeysController.down();
-                break;
-            case KeyEvent.VK_RIGHT:
-                for (ArrowKeysController arrowKeysController : arrowKeysControllers)
-                    arrowKeysController.right();
-                break;
         }
 
         switch (event.getKeyCode()) {
@@ -254,6 +218,22 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
             keyTypedListener.keyTyped(event, this);
     }
 
+    public void update() {
+        for (WASDController wasdController : wasdControllers) {
+            if (isHeld(KeyEvent.VK_W)) wasdController.up();
+            if (isHeld(KeyEvent.VK_S)) wasdController.down();
+            if (isHeld(KeyEvent.VK_A)) wasdController.left();
+            if (isHeld(KeyEvent.VK_D)) wasdController.right();
+        }
+
+        for (ArrowKeysController arrowKeysController : arrowKeysControllers) {
+            if (isHeld(KeyEvent.VK_UP)) arrowKeysController.up();
+            if (isHeld(KeyEvent.VK_DOWN)) arrowKeysController.down();
+            if (isHeld(KeyEvent.VK_LEFT)) arrowKeysController.left();
+            if (isHeld(KeyEvent.VK_RIGHT)) arrowKeysController.right();
+        }
+    }
+
     public void register(ArrowKeysController arrowKeysController) {
         this.arrowKeysControllers.add(arrowKeysController);
     }
@@ -308,6 +288,14 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
 
     public void register(MouseWheelMovedListener mouseWheelMovedListener) {
         mouseWheelMovedListeners.add(mouseWheelMovedListener);
+    }
+
+    public boolean isShiftDown() {
+        return isHeld(KeyEvent.VK_SHIFT);
+    }
+
+    public boolean isControlDown() {
+        return isHeld(KeyEvent.VK_CONTROL);
     }
 
     public boolean wasClicked(Click click) {
