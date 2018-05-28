@@ -152,6 +152,11 @@ public class Window extends Canvas {
         return new ArrayList<>(renderers);
     }
 
+    public static void input() {
+        for (Window window : values())
+            window.getInput().update();
+    }
+
     public static List<Window> values() {
         return new ArrayList<>(windows);
     }
