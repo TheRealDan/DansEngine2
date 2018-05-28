@@ -10,6 +10,10 @@ public class Location {
         this(0.0, 0.0, 0.0);
     }
 
+    public Location(double x, double y) {
+        this(x, y, 0);
+    }
+
     public Location(double x, double y, double z) {
         this(0, x, y, z);
     }
