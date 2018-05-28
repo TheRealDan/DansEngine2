@@ -2,5 +2,5 @@ package me.therealdan.dansengine.network;
 
 public interface Client {
 
-    void sendPacket(Packet packet);
+    void receivePacket(Packet packet);
 }

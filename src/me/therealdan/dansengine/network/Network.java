@@ -56,7 +56,7 @@ public class Network {
                         try {
                             Packet packet = waitForClients();
                             for (Server server : servers)
-                                server.sendPacket(packet);
+                                server.receivePacket(packet);
                         } catch (Exception e) {
                             new Error(e, "WaitForClient Thread");
                         }
@@ -80,12 +80,14 @@ public class Network {
             Thread waitForServer = new Thread("WaitForServer") {
                 @Override
                 public void run() {
-                    try {
-                        Packet packet = waitForServer();
-                        for (Client client : clients)
-                            client.sendPacket(packet);
-                    } catch (Exception e) {
-                        new Error(e, "WaitForServer Thread");
+                    while (true) {
+                        try {
+                            Packet packet = waitForServer();
+                            for (Client client : clients)
+                                client.receivePacket(packet);
+                        } catch (Exception e) {
+                            new Error(e, "WaitForServer Thread");
+                        }
                     }
                 }
             };
