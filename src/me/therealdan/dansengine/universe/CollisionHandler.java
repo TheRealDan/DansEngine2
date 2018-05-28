@@ -42,7 +42,7 @@ public class CollisionHandler {
     }
 
     private void separate(Entity entity, Entity entity1) {
-        if (entity.isImmoveable()) return;
+        if (entity.isImmovable()) return;
 
         Location location = entity.getLocation();
 

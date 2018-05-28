@@ -8,7 +8,7 @@ public interface Entity {
 
     boolean isVisable();
 
-    boolean isImmoveable();
+    boolean isImmovable();
 
     boolean isSolid();
 
