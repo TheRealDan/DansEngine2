@@ -1,6 +1,10 @@
 package me.therealdan.dansengine.universe;
 
+import java.text.DecimalFormat;
+
 public class Vector {
+
+    private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     private double x, y, z;
 
@@ -13,6 +17,12 @@ public class Vector {
     }
 
     public Vector(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public void set(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -32,10 +42,6 @@ public class Vector {
 
     public double dot(Vector vector) {
         return this.x * vector.x + this.y * vector.y + this.z * vector.z;
-    }
-
-    public String toString() {
-        return "x=" + this.x  + ", y=" + this.y + ", z=" + this.z;
     }
 
     public Vector add(Vector vector) {
@@ -62,5 +68,20 @@ public class Vector {
 
     public Vector clone() {
         return new Vector(x, y, z);
+    }
+
+    public String formatXY() {
+        return decimalFormat.format(getX()) + "x, " +
+                decimalFormat.format(getY()) + "y";
+    }
+
+    public String formatXYZ() {
+        return decimalFormat.format(getX()) + "x, " +
+                decimalFormat.format(getY()) + "y, " +
+                decimalFormat.format(getZ()) + "z";
+    }
+
+    public String toString() {
+        return "x=" + getX() + ", y=" + getY() + ", z=" + getZ();
     }
 }

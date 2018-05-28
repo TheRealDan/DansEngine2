@@ -1,6 +1,10 @@
 package me.therealdan.dansengine.universe;
 
+import java.text.DecimalFormat;
+
 public class Location {
+
+    private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
     private int universe;
     private double x, y, z;
@@ -33,6 +37,12 @@ public class Location {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+    }
+
+    public void add(Vector vector) {
+        this.x += vector.getX();
+        this.y += vector.getY();
+        this.z += vector.getZ();
     }
 
     public void setUniverse(int universe) {
@@ -218,6 +228,17 @@ public class Location {
 
     public Location clone() {
         return new Location(this.universe, this.x, this.y, this.z);
+    }
+
+    public String formatXY() {
+        return decimalFormat.format(getX()) + "x," +
+                decimalFormat.format(getY()) + "y";
+    }
+
+    public String formatXYZ() {
+        return decimalFormat.format(getX()) + "x, " +
+                decimalFormat.format(getY()) + "y, " +
+                        decimalFormat.format(getZ()) + "z";
     }
 
     public String toString() {
