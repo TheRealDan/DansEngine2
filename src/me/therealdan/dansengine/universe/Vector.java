@@ -8,6 +8,10 @@ public class Vector {
         this(0.0, 0.0, 0.0);
     }
 
+    public Vector(double x, double y) {
+        this(x, y, 0.0);
+    }
+
     public Vector(double x, double y, double z) {
         this.x = x;
         this.y = y;
