@@ -39,8 +39,9 @@ public class DansEngine implements Runnable {
                 updates += (now - last) / UPDATE_INTERVAL;
                 last = now;
                 while (updates >= 1) {
+                    Window.input();
                     update();
-                    if (getMatchUPS()) render();
+                    if (getMatchUPS() && (int) updates == 1) render();
                     updates--;
                     ups++;
                 }
