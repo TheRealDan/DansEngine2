@@ -6,12 +6,15 @@ public class Packet {
 
     private InetAddress address;
     private int port;
-    private String data;
+    protected String data;
+
+    public Packet() {
+        this("");
+    }
 
     public Packet(String data, InetAddress address, int port) {
-        this.data = data;
-        this.address = address;
-        this.port = port;
+        this(data);
+        setAddress(address, port);
     }
 
     public Packet(String data) {
