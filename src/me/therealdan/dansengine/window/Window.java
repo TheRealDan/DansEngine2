@@ -9,7 +9,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class Window extends Canvas {
@@ -20,7 +22,6 @@ public class Window extends Canvas {
     private HashSet<Renderer> renderers = new HashSet<>();
 
     private JFrame frame;
-    private Window self;
     private Input input;
     private int id;
 
@@ -42,7 +43,6 @@ public class Window extends Canvas {
 
     public Window(String title, int width, int height, boolean resizeable, boolean exitOnClose, boolean alwaysOnTop, boolean undecorated) {
         this.frame = new JFrame(title);
-        this.self = this;
         this.input = new Input();
         this.id = ID++;
 
@@ -57,8 +57,7 @@ public class Window extends Canvas {
         getFrame().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent event) {
-                DansEngine.getInstance().onWindowClosed(self);
-                if (getFrame().getDefaultCloseOperation() == WindowConstants.EXIT_ON_CLOSE) windows.remove(self);
+                close();
             }
         });
 
@@ -123,9 +122,14 @@ public class Window extends Canvas {
     }
 
     public void close() {
-        DansEngine.getInstance().onWindowClosed(this);
-        getFrame().dispose();
-        windows.remove(this);
+        WindowClosedEvent event = new WindowClosedEvent(this);
+        if (getFrame().getDefaultCloseOperation() == WindowConstants.EXIT_ON_CLOSE) event.setDispose(true);
+        DansEngine.getInstance().onWindowClosed(event);
+
+        if (event.shouldDispose()) {
+            getFrame().dispose();
+            windows.remove(this);
+        }
     }
 
     public void register() {

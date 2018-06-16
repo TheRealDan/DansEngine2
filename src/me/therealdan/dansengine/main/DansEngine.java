@@ -1,6 +1,7 @@
 package me.therealdan.dansengine.main;
 
 import me.therealdan.dansengine.window.Window;
+import me.therealdan.dansengine.window.WindowClosedEvent;
 
 public class DansEngine implements Runnable {
 
@@ -74,7 +75,7 @@ public class DansEngine implements Runnable {
             window.update(window.getRenderers());
     }
 
-    public void onWindowClosed(Window window) {
+    public void onWindowClosed(WindowClosedEvent event) {
     }
 
     public static void setTargetUPS(double targetUPS) {
