@@ -77,7 +77,8 @@ public class Window extends Canvas {
 
     public void update(List<Renderer> renderers) {
         for (Renderer renderer : renderers)
-            renderer.update(this);
+            if (renderer != null)
+                renderer.update(this);
     }
 
     public void render(Renderer... renderers) {
@@ -95,7 +96,8 @@ public class Window extends Canvas {
             Graphics2D graphics2D = (Graphics2D) bufferStrategy.getDrawGraphics();
 
             for (Renderer renderer : renderers)
-                renderer.render(graphics2D, this);
+                if (renderer != null)
+                    renderer.render(graphics2D, this);
 
             this.frames++;
             if (System.currentTimeMillis() - this.time >= 1000) {
