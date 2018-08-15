@@ -46,7 +46,7 @@ public class CollisionHandler {
 
         Location location = entity.getLocation();
 
-
+        // TODO
 
         entity.teleport(location);
     }

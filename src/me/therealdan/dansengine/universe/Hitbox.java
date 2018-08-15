@@ -89,6 +89,24 @@ public class Hitbox {
         return greatestX || greatestY || greatestZ || lowestX || lowestY || lowestZ;
     }
 
+    public Location getCenter() {
+        int x = 0;
+        int y = 0;
+        int z = 0;
+
+        for (Location point : getPoints()) {
+            x += point.getX();
+            y += point.getY();
+            z += point.getZ();
+        }
+
+        x /= getPoints().size();
+        y /= getPoints().size();
+        z /= getPoints().size();
+
+        return new Location(x, y, z);
+    }
+
     public List<Location> getPoints() {
         return new ArrayList<>(points);
     }

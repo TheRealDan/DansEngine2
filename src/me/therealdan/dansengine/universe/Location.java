@@ -230,6 +230,10 @@ public class Location {
         return new Location(this.universe, this.x, this.y, this.z);
     }
 
+    public Vector toVector() {
+        return new Vector(x, y, z);
+    }
+
     public String formatXY() {
         return decimalFormat.format(getX()) + "x," +
                 decimalFormat.format(getY()) + "y";

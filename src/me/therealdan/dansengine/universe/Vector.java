@@ -22,6 +22,12 @@ public class Vector {
         this.z = z;
     }
 
+    public void set(Vector vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = vector.z;
+    }
+
     public void set(double x, double y, double z) {
         this.x = x;
         this.y = y;

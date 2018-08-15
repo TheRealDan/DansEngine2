@@ -234,16 +234,33 @@ public class Input implements MouseListener, MouseMotionListener, MouseWheelList
         }
     }
 
+    public void unregister(Object object) {
+        arrowKeysControllers.remove(object);
+        textControllers.remove(object);
+        wasdControllers.remove(object);
+        keyPressedListeners.remove(object);
+        keyReleasedListeners.remove(object);
+        keyTypedListeners.remove(object);
+        mouseClickedListeners.remove(object);
+        mouseDraggedListeners.remove(object);
+        mouseEnteredListeners.remove(object);
+        mouseExitedListeners.remove(object);
+        mouseMovedListeners.remove(object);
+        mousePressedListeners.remove(object);
+        mouseReleasedListeners.remove(object);
+        mouseWheelMovedListeners.remove(object);
+    }
+
     public void register(ArrowKeysController arrowKeysController) {
-        this.arrowKeysControllers.add(arrowKeysController);
+        arrowKeysControllers.add(arrowKeysController);
     }
 
     public void register(TextController textController) {
-        this.textControllers.add(textController);
+        textControllers.add(textController);
     }
 
     public void register(WASDController wasdController) {
-        this.wasdControllers.add(wasdController);
+        wasdControllers.add(wasdController);
     }
 
     public void register(KeyPressedListener keyPressedListener) {
