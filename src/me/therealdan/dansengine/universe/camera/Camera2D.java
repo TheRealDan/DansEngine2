@@ -60,6 +60,14 @@ public class Camera2D extends Location implements Camera {
         return height;
     }
 
+    public int getHalfWidth() {
+        return (int) (getWidth() / 2.0);
+    }
+
+    public int getHalfHeight() {
+        return (int) (getHeight() / 2.0);
+    }
+
     @Override
     public int[] getXPoints(Location origin, Hitbox hitbox) {
         int[] xPoints = new int[hitbox.getPoints().size()];
@@ -88,5 +96,25 @@ public class Camera2D extends Location implements Camera {
             yPoints[i++] = (int) pixel;
         }
         return yPoints;
+    }
+
+    public int getScreenX(Location location) {
+        return (int) ((location.getX() - getX()) * getPixelsPerLocation()) + getHalfWidth();
+    }
+
+    public int getScreenY(Location location) {
+        return (int) ((location.getY() - getY()) * getPixelsPerLocation()) + getHalfHeight();
+    }
+
+    public Location getLocation(int screenX, int screenY) {
+        Location location = clone();
+
+        double xOffset = (getHalfWidth() - screenX) / getPixelsPerLocation();
+        double yOffset = (getHalfHeight() - screenY) / getPixelsPerLocation();
+
+        location.addX(-xOffset);
+        location.addY(-yOffset);
+
+        return location;
     }
 }

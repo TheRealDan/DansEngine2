@@ -242,10 +242,36 @@ public class Location {
     public String formatXYZ() {
         return decimalFormat.format(getX()) + "x, " +
                 decimalFormat.format(getY()) + "y, " +
-                        decimalFormat.format(getZ()) + "z";
+                decimalFormat.format(getZ()) + "z";
     }
 
     public String toString() {
-        return "u=" + getUniverse() + ", x=" + getX() + ", y=" + getY() + ", z=" + getZ() + ", yaw=" + getYaw() + ", pitch=" + getPitch();
+        String string = decimalFormat.format(getX()) + "L" + decimalFormat.format(getY());
+
+        if (getPitch() != 0.0 || getYaw() != 0.0) {
+            string += "L" + decimalFormat.format(getZ()) + "L" + getUniverse() + "L" + decimalFormat.format(getYaw()) + "L" + decimalFormat.format(getPitch());
+        } else if (getUniverse() != 0) {
+            string += "L" + decimalFormat.format(getZ()) + "L" + getUniverse();
+        } else if (getZ() != 0.0) {
+            string += "L" + decimalFormat.format(getZ());
+        }
+
+        return string;
+    }
+
+    public static Location fromString(String string) {
+        String[] args = string.split("L");
+        Location location = new Location(0, 0, 0, 0, 0, 0);
+
+        if (args.length > 0) location.setX(Double.parseDouble(args[0]));
+        if (args.length > 1) location.setY(Double.parseDouble(args[1]));
+        if (args.length > 2) location.setZ(Double.parseDouble(args[2]));
+
+        if (args.length > 3) location.universe = Integer.parseInt(args[3]);
+
+        if (args.length > 4) location.setYaw(Double.parseDouble(args[4]));
+        if (args.length > 5) location.setPitch(Double.parseDouble(args[5]));
+
+        return location;
     }
 }

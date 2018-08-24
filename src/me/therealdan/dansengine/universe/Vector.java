@@ -28,10 +28,38 @@ public class Vector {
         this.z = vector.z;
     }
 
+    public void set(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public void set(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public void add(double x, double y) {
+        this.x += x;
+        this.y += y;
+    }
+
+    public void add(double x, double y, double z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+    }
+
+    public void addX(double x) {
+        this.x += x;
+    }
+
+    public void addY(double y) {
+        this.y += y;
+    }
+
+    public void addZ(double z) {
+        this.z += z;
     }
 
     public double getX() {
