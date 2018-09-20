@@ -41,11 +41,6 @@ public class Camera2D extends Location implements Camera {
     }
 
     @Override
-    public double getPixelsPerLocation() {
-        return PIXELS_PER_LOCATION;
-    }
-
-    @Override
     public double getPixels() {
         return PIXELS_PER_LOCATION * getScale();
     }
@@ -76,7 +71,7 @@ public class Camera2D extends Location implements Camera {
             double pointInSpace = origin.getX() + point.getX();
             double relativeToCamera = pointInSpace - getX();
             double pixel = relativeToCamera * getPixels();
-            pixel += getWidth() / 2;
+            pixel += getWidth() / 2.0;
 
             xPoints[i++] = (int) pixel;
         }
@@ -91,26 +86,34 @@ public class Camera2D extends Location implements Camera {
             double pointInSpace = origin.getY() + point.getY();
             double relativeToCamera = pointInSpace - getY();
             double pixel = relativeToCamera * getPixels();
-            pixel += getHeight() / 2;
+            pixel += getHeight() / 2.0;
 
             yPoints[i++] = (int) pixel;
         }
         return yPoints;
     }
 
+    public int getScreenX(double locX) {
+        return (int) ((locX - getX()) * getPixels()) + getHalfWidth();
+    }
+
+    public int getScreenY(double locY) {
+        return (int) ((locY - getY()) * getPixels()) + getHalfHeight();
+    }
+
     public int getScreenX(Location location) {
-        return (int) ((location.getX() - getX()) * getPixelsPerLocation()) + getHalfWidth();
+        return (int) ((location.getX() - getX()) * getPixels()) + getHalfWidth();
     }
 
     public int getScreenY(Location location) {
-        return (int) ((location.getY() - getY()) * getPixelsPerLocation()) + getHalfHeight();
+        return (int) ((location.getY() - getY()) * getPixels()) + getHalfHeight();
     }
 
     public Location getLocation(int screenX, int screenY) {
         Location location = clone();
 
-        double xOffset = (getHalfWidth() - screenX) / getPixelsPerLocation();
-        double yOffset = (getHalfHeight() - screenY) / getPixelsPerLocation();
+        double xOffset = (getHalfWidth() - screenX) / getPixels();
+        double yOffset = (getHalfHeight() - screenY) / getPixels();
 
         location.addX(-xOffset);
         location.addY(-yOffset);

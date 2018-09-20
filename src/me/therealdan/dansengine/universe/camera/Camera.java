@@ -14,8 +14,6 @@ public interface Camera {
 
     double getScale();
 
-    double getPixelsPerLocation();
-
     double getPixels();
 
     int getWidth();
